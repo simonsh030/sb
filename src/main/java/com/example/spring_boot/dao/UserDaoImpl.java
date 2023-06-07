@@ -2,12 +2,11 @@ package com.example.spring_boot.dao;
 
 
 import com.example.spring_boot.model.User;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 
@@ -15,10 +14,12 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
 
     @PersistenceContext
-    @Autowired
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    public UserDaoImpl(){}
+    @Autowired
+    public UserDaoImpl(EntityManager entityManager){
+        this.entityManager = entityManager;
+    }
 
     @Override
     public List<User> index() {
