@@ -5,7 +5,10 @@ import com.example.spring_boot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -36,23 +39,31 @@ public class UserController {
         return "new";
     }
 
-    @PostMapping
-    public String saveUser(@ModelAttribute("user") User user) {
-        userService.saveUser(user);
-        return "redirect:/users";
-    }
 
     @GetMapping("/{id}/edit")
     public String editUser(@PathVariable("id") int id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         return "edit";
     }
+    @PostMapping
+    public String saveUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "new";
+        }
+        userService.saveUser(user);
+        return "redirect:/users";
+    }
 
     @PatchMapping("/{id}")
-    public String updateUser(@ModelAttribute("user") User user) {
+    public String updateUser(@PathVariable("id") int id, @Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "edit";
+        }
+        user.setId(id);
         userService.updateUser(user);
         return "redirect:/users";
     }
+
 
     @DeleteMapping("/{id}")
     public String deleteUserById(@PathVariable("id") int id) {
